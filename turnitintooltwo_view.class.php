@@ -934,7 +934,20 @@ class turnitintooltwo_view {
 
         $table->data = $rows;
 
-        $output = html_writer::table($table);
+        // hack: uofr - adding message about originality report generation speed
+        $ur_do_resubmit = $turnitintooltwoassignment->turnitintooltwo->reportgenspeed;
+        
+        $ur_sub_msg = '<div class="ur_sub_msg"><p>Please note: Originality reports typically take 20 minutes or less for the report to generate for the first submission. During busy periods this process can take up to 24 hours.</p></div>';
+
+        if ($ur_do_resubmit == 1) $ur_sub_msg .= '<div class="ur_resub_msg"><p>This assignment is configured to allow resubmissions and generate originality reports immediately.<br /> <em><b>If you are resubmitting a file for this assignment, the new originality report will take approximately 24 hours to be generated.</b></em></p></div>';
+
+        $ur_sub_msg .= '<div class="ur_sub_msg"><p>If you still see a "pending" status after 24 hours, contact <a href="mailto:IT.Support@uregina.ca">IT.Support@uregina.ca</a> to say that you have been waiting over 24 hours for the originality report. Please include the URL for this assignment page in that message as well.</p></div>';
+        
+//?subject=Turnitin submission pending over 24 hours&body=My Turnitin submission has been pending for over 24 hours.
+
+        $output = html_writer::table($table).html_writer::tag('div',$ur_sub_msg,array('class'=>'ur_sub_msg_frame'));
+        //$output = html_writer::table($table);
+        // end hack
 
         return $output;
     }

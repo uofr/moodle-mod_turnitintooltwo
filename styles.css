@@ -905,3 +905,16 @@ h3.main {
 .mod_turnitintooltwo #course_search_options input, .mod_turnitintooltwo #course_search_options select {
     margin-right: 32px;
 }
+
+.ur_sub_msg {
+    padding: 0.5em 1em;
+    font-size: 0.85em;
+    margin-top: 0.5em;
+}
+
+.ur_resub_msg {
+    padding: 0.5em 1em;
+    font-size: 0.85em;
+    background-color: cornsilk;
+    border: solid 1px #999999;
+}
