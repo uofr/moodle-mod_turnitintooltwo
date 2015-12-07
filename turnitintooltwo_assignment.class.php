@@ -189,7 +189,7 @@ class turnitintooltwo_assignment {
         $newassignment["turnitintooltwo"]->course = $courseid;
         $newassignment["turnitintooltwo"]->name = $assignmentname;
         $newassignment["turnitintooltwo"]->numparts = count($partids);
-        $newassignment["turnitintooltwo"]->gradedisplay = 1;
+        $newassignment["turnitintooltwo"]->gradedisplay = $config->default_gradedisplay;
         $newassignment["turnitintooltwo"]->shownonsubmission = 1;
         $newassignment["turnitintooltwo"]->usegrademark = $config->usegrademark;
         // Get maximum grade.
@@ -338,7 +338,7 @@ class turnitintooltwo_assignment {
      * @param string $coursetype whether the course is TT (Turnitintool) or PP (Plagiarism Plugin)
      * @return object the turnitin course if created
      */
-    public function create_tii_course($course, $ownerid, $coursetype = "TT", $workflowcontext = "site") {
+    public static function create_tii_course($course, $ownerid, $coursetype = "TT", $workflowcontext = "site") {
         global $DB;
 
         $turnitincomms = new turnitintooltwo_comms();
@@ -396,7 +396,7 @@ class turnitintooltwo_assignment {
      * @param var $course The course object
      * @param string $coursetype whether the course is TT (Turnitintool) or PP (Plagiarism Plugin)
      */
-    public function edit_tii_course($course, $coursetype = "TT") {
+    public static function edit_tii_course($course, $coursetype = "TT") {
         global $DB;
 
         $turnitincomms = new turnitintooltwo_comms();
@@ -470,6 +470,8 @@ class turnitintooltwo_assignment {
      * @return array $users
      */
     public function get_tii_users_by_role($role = "Learner") {
+        global $DB;
+
         $users = array();
         // Get Moodle Course Object.
         $course = $this->get_course_data($this->turnitintooltwo->course);
@@ -492,38 +494,52 @@ class turnitintooltwo_assignment {
         // Add each user to an array.
         foreach ($readmemberships as $readmembership) {
             if ($readmembership->getRole() == $role) {
-                $user = new TiiUser();
-                $user->setUserId($readmembership->getUserId());
 
-                try {
-                    $response = $turnitincall->readUser($user);
-                    $readuser = $response->getUser();
-
-                    $users[$readmembership->getUserId()]["firstname"] = $readuser->getFirstName();
-                    $users[$readmembership->getUserId()]["lastname"] = $readuser->getLastName();
+                // Check user is a Moodle user. otherwise we have to go to Turnitin for their name.
+                $moodleuserid = turnitintooltwo_user::get_moodle_user_id($readmembership->getUserId());
+                if (!empty($moodleuserid)) {
+                    $user = $DB->get_record('user', array('id' => $moodleuserid));
+                    $users[$readmembership->getUserId()]["firstname"] = $user->firstname;
+                    $users[$readmembership->getUserId()]["lastname"] = $user->lastname;
                     $users[$readmembership->getUserId()]["membership_id"] = $readmembership->getMembershipId();
-
-                } catch (Exception $e) {
-                    // A read user exception occurs when users are inactive. Re-enrol user to make them active.
-                    $membership = new TiiMembership();
-                    $membership->setClassId($course->turnitin_cid);
-                    $membership->setUserId($readmembership->getUserId());
-                    $membership->setRole($role);
+                } else {
+                    $user = new TiiUser();
+                    $user->setUserId($readmembership->getUserId());
 
                     try {
-                        $turnitincall->createMembership($membership);
-
-                        $user = new TiiUser();
-                        $user->setUserId($readmembership->getUserId());
-
                         $response = $turnitincall->readUser($user);
                         $readuser = $response->getUser();
 
                         $users[$readmembership->getUserId()]["firstname"] = $readuser->getFirstName();
                         $users[$readmembership->getUserId()]["lastname"] = $readuser->getLastName();
                         $users[$readmembership->getUserId()]["membership_id"] = $readmembership->getMembershipId();
-                    } catch ( InnerException $e ) {
-                        $turnitincomms->handle_exceptions($e, 'tiiusergeterror');
+
+                    } catch (Exception $e) {
+                        // A read user exception occurs when users are inactive. Re-enrol user to make them active.
+                        $membership = new TiiMembership();
+                        $membership->setClassId($course->turnitin_cid);
+                        $membership->setUserId($readmembership->getUserId());
+                        $membership->setRole($role);
+
+                        try {
+                            $turnitincall->createMembership($membership);
+                        } catch ( InnerException $e ) {
+                            // Ignore excepion.
+                        }
+
+                        try {
+                            $user = new TiiUser();
+                            $user->setUserId($readmembership->getUserId());
+
+                            $response = $turnitincall->readUser($user);
+                            $readuser = $response->getUser();
+
+                            $users[$readmembership->getUserId()]["firstname"] = $readuser->getFirstName();
+                            $users[$readmembership->getUserId()]["lastname"] = $readuser->getLastName();
+                            $users[$readmembership->getUserId()]["membership_id"] = $readmembership->getMembershipId();
+                        } catch ( InnerException $e ) {
+                            $turnitincomms->handle_exceptions($e, 'tiiusergeterror');
+                        }
                     }
                 }
             }
@@ -640,7 +656,6 @@ class turnitintooltwo_assignment {
         // Insert the default options for the assignment.
         $this->turnitintooltwo->timecreated = time();
         $this->turnitintooltwo->dateformat = "d/m/Y";
-        $this->turnitintooltwo->gradedisplay = 1;
         $this->turnitintooltwo->commentedittime = 1800;
         $this->turnitintooltwo->commentmaxsize = 800;
         $this->turnitintooltwo->autosubmission = 1;
@@ -973,7 +988,8 @@ class turnitintooltwo_assignment {
      */
     public function get_parts($peermarks = true) {
         global $DB;
-        if ($parts = $DB->get_records("turnitintooltwo_parts", array("turnitintooltwoid" => $this->turnitintooltwo->id))) {
+        if ($parts = $DB->get_records("turnitintooltwo_parts",
+                                        array("turnitintooltwoid" => $this->turnitintooltwo->id), 'id ASC')) {
             if ($peermarks) {
                 foreach ($parts as $part) {
                     $parts[$part->id]->peermark_assignments = $this->get_peermark_assignments($part->tiiassignid);
@@ -1309,7 +1325,9 @@ class turnitintooltwo_assignment {
                 $part->submitted = $partdetails->submitted;
                 $part->unanon = $partdetails->unanon;
                 // Set anonymous marking depending on whether part has been unanonymised.
-                if ($config->useanon && $partdetails->unanon != 1) {
+                if ($config->useanon
+                    && $partdetails->unanon != 1
+                    && $partdetails->submitted != 1 ) {
                     $assignment->setAnonymousMarking($this->turnitintooltwo->anon);
                 }
                 $parttiiassignid = $partdetails->tiiassignid;
@@ -1317,6 +1335,7 @@ class turnitintooltwo_assignment {
 
             if ($parttiiassignid > 0) {
                 $assignment->setAssignmentId($parttiiassignid);
+
                 $this->edit_tii_assignment($assignment);
             } else {
                 $parttiiassignid = $this->create_tii_assignment($assignment, $this->id, $i);

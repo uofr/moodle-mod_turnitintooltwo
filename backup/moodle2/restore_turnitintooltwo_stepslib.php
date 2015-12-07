@@ -121,7 +121,7 @@ class restore_turnitintooltwo_activity_structure_step extends restore_activity_s
         if (!$tiiuser = $DB->get_record('turnitintooltwo_users', array('userid' => $data->ownerid))) {
             $DB->insert_record('turnitintooltwo_users',$tiiowner);
         }
-        if (!$DB->get_records('turnitintooltwo_courses', array('courseid' => $data->courseid))) {
+        if (!$DB->get_records('turnitintooltwo_courses', array('courseid' => $data->courseid, 'course_type' => 'TT'))) {
             $data->course_type = 'TT';
             $newitemid = $DB->insert_record('turnitintooltwo_courses', $data);
             $this->set_mapping('turnitintooltwo_courses', $oldid, $newitemid);
@@ -156,7 +156,7 @@ class restore_turnitintooltwo_activity_structure_step extends restore_activity_s
         }
 
         $newitemid = $DB->insert_record('turnitintooltwo_submissions', $data);
-        $this->set_mapping('turnitintooltwo_submissions', $oldid, $newitemid);
+        $this->set_mapping('turnitintooltwo_submissions', $oldid, $newitemid, true);
     }
 
     protected function after_execute() {
@@ -165,5 +165,8 @@ class restore_turnitintooltwo_activity_structure_step extends restore_activity_s
             $_SESSION["assignments_to_create"][] = $_SESSION['assignment_id'];
             unset($_SESSION['assignment_id']);
         }
+
+        // Add turnitin related files, itemid based on mapping 'turnitintooltwo_submissions'.
+        $this->add_related_files('mod_turnitintooltwo', 'submissions', 'turnitintooltwo_submissions');
     }
 }
