@@ -30,8 +30,12 @@ if ($ADMIN->fulltree) {
 
     $library_warning = '';
     if (!extension_loaded('XMLWriter')) {
-        $library_warning = html_writer::tag('div', get_string('noxmlwriterlibrary', 'turnitintooltwo'),
-                                                array('class' => 'library_not_present_warning'));
+        $library_warning .= html_writer::tag('div', get_string('noxmlwriterlibrary', 'turnitintooltwo'),
+                                                array('class' => 'tii_library_not_present_warning'));
+    }
+    if (!extension_loaded('mbstring')) {
+        $library_warning .= html_writer::tag('div', get_string('nombstringlibrary', 'turnitintooltwo'),
+                                                array('class' => 'tii_library_not_present_warning'));
     }
 
     $tabmenu = $turnitintooltwoview->draw_settings_menu($module, 'settings').
@@ -237,8 +241,8 @@ if ($ADMIN->fulltree) {
                                                         0, $lnoptions));
 
         $settings->add(new admin_setting_configselect('turnitintooltwo/lastnamegen',
-                                                        get_string('psuedolastnamegen', 'turnitintooltwo'),
-                                                        get_string('psuedolastnamegen_desc', 'turnitintooltwo' ),
+                                                        get_string('pseudolastnamegen', 'turnitintooltwo'),
+                                                        get_string('pseudolastnamegen_desc', 'turnitintooltwo' ),
                                                         0, $ynoptions));
 
         $settings->add(new admin_setting_configtext('turnitintooltwo/pseudosalt',
@@ -311,7 +315,7 @@ if ($ADMIN->fulltree) {
                                                     get_string('reportgenspeed', 'turnitintooltwo'),
                                                     '', 0, $genoptions ));
 
-    $suboptions = array( 0 => get_string('norepository', 'turnitintooltwo'), 
+    $suboptions = array( 0 => get_string('norepository', 'turnitintooltwo'),
                         1 => get_string('standardrepository', 'turnitintooltwo'));
 
     if (!isset($config->repositoryoption)) {

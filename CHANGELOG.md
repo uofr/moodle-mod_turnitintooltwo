@@ -1,3 +1,48 @@
+### Date:       2016-February-23
+### Release:    v2016011104
+
+- Grade display help text is now wrapped.
+- Links to migration tool have been renamed to course restoration.
+- Block JavaScipt code has been moved out of the direct package as part of our efforts to separate plugins.
+- Cron functionality has been moved to scheduled tasks (Thanks to mwehr).
+- Allow emails to be sent from the noreply address.
+- Fixes:
+	- Fixed an issue where the file name would be appending multiple times if the temp file can't be created.
+	- Fixed cron warning message regarding REQUEST_URI (Thanks to AviMoto).
+	- Query fixed during cron for Postgres (Thanks to mwehr).
+
+---
+
+### Date:       2016-January-25
+### Release:    v2016011102
+
+- Fixes:
+	- Reworked DV launchers to remove cross domain iframe problem preventing opening in Safari.
+
+---
+
+### Date:       2016-January-12
+### Release:    v2016011101
+
+- Instructors to be notified when a submission has been made.
+- Contrast changed for inbox error messages.
+- Check added to verify if php_mbstring is enabled.
+- Ensure filename to be sent to Turnitin is UTF-8 encoded
+- Unnecessary addition of user being updated in Turnitin and submission inbox being viewed removed from plugin activity logs.
+- Unused (pre Moodle 2.6) $module settings removed from version.php.
+- Moodle's cron will update OR scores if necessary after the due date has passed.
+- Use default values if user has no firstname or lastname.
+- Fixes:
+	- Anonymous grades to gradebook after post date has passed processed by cron.
+	- Grademark icon visibility now dependent on whether GradeMark feedback exists rather than a grade.
+    - Multi-part assignment Delete icon missing from "delete parts".
+    - Table sorting images shown in Submission inbox.
+    - Fix object variable in ajax request for PHP7 compatability.
+    - Additional user status checking added to view.php functions (Thanks to Skylar Kelty)
+	- Replace deprecated mime_content_type function in submission to Turnitin process.
+
+---
+
 ### Date:       2015-November-30
 ### Release:    v2015040111
 
