@@ -1,7 +1,22 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 // Version: 2015040101
 // Date: 2015-04-01
-// Language: en
+// Language: en.
 
 $string['addsubmission'] = 'Add Submission';
 $string['allowlate'] = 'Allow Submissions after the Due Date';
@@ -52,8 +67,8 @@ $string['maxfilesize'] = 'Maximum File Size';
 $string['maxfilesize_help'] = 'This setting determines the maximum file size for user submissions to each assignment part. The maximum value you can set this value to is dictated by the value set in course settings, this value is further capped to a maximum file size of 40Mb which is the maximum allowed filesize for file uploads to Turnitin.';
 $string['maxlength'] = 'The maximum length for {$a->field} is {$a->length} characters';
 $string['maxmarks'] = 'Max Marks';
-$string['pluginname'] = 'Assignment (Turnitin)';
-$string['modulename'] = 'Assignment (Turnitin)';
+$string['pluginname'] = 'Turnitin Assignment 2';
+$string['modulename'] = 'Turnitin Assignment 2';
 $string['modulenameplural'] = 'Turnitin Assignments';
 $string['moduleversion'] = 'Version';
 $string['mysubmissions'] = 'My Submissions';
@@ -77,7 +92,7 @@ $string['partnameerror'] = 'Part name can not left blank.';
 $string['partdueerror'] = 'Start date must be before due date.';
 $string['pending'] = 'Pending';
 $string['permissiondeniederror'] = 'You do not have the correct permission to complete the requested action';
-$string['pluginadministration'] = 'Assignment (Turnitin) Administration';
+$string['pluginadministration'] = 'Turnitin Assignment 2 Administration';
 $string['portfolio'] = 'Portfolio';
 $string['print'] = 'Print';
 $string['proxypassword'] = 'Proxy Password';
@@ -151,7 +166,7 @@ $string['turnitintooltwo:grade'] = 'Grade Turnitin Tool Assignments';
 $string['turnitintooltwo:submit'] = 'Submit to Turnitin Tool Assignments';
 $string['turnitintooltwo:read'] = 'Read Turnitin Tool Assignments';
 $string['turnitintooltwo:view'] = 'View Turnitin Tool Assignments';
-$string['turnitintooltwoadministration'] = 'Assignment (Turnitin) Administration';
+$string['turnitintooltwoadministration'] = 'Turnitin Assignment 2 Administration';
 $string['turnitintooltwoagreement'] = 'Disclaimer / Agreement';
 $string['turnitintooltwoagreement_default'] = 'I confirm that this submission is my own work and I accept all responsibility for any copyright infringement that may occur as a result of this submission.';
 $string['turnitintooltwointro'] = 'Summary';
@@ -214,8 +229,8 @@ $string['erater_handbook_learners'] = 'English Learners';
 $string['erater_dictionary_enus'] = 'US English Dictionary';
 $string['erater_dictionary_engb'] = 'UK English Dictionary';
 $string['erater_dictionary_en'] = 'Both US and UK English Dictionaries';
-$string['turnitinuseerater'] = 'Enable ETS&copy';
-$string['turnitinuseerater_desc'] = 'Choose whether to enable ETS&copy grammar checking.<br /><i>(Enable this option only if ETS&copy e-rater is enabled on your Turnitin account)</i>';
+$string['turnitinuseerater'] = 'Enable ETS&copy;';
+$string['turnitinuseerater_desc'] = 'Choose whether to enable ETS&copy; grammar checking.<br /><i>(Enable this option only if ETS&copy; e-rater is enabled on your Turnitin account)</i>';
 $string['student_read'] = 'The student viewed the paper on:';
 $string['student_notread'] = 'The student has not viewed this paper.';
 $string['relinkusers'] = 'Relink Users';
@@ -549,3 +564,4 @@ $string['tiidebugginglogs'] = 'Debugging and Logging';
 $string['diagnosticoptions_0'] = 'Off';
 $string['diagnosticoptions_1'] = 'Standard';
 $string['diagnosticoptions_2'] = 'Debugging';
+$string['nofinfolibrary'] = 'To use this plugin you will need to have the PHP Fileinfo extension installed on your server.';
