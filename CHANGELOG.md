@@ -1,15 +1,107 @@
+### Date:		2017-August-09
+### Release:	v2017080901
+
+**Use new assignment dates during course reset** - We received a report that during a course reset, anonymous marking settings were not carried over if an assignment's due date had already passed.
+
+Now, you can opt to use new assignment dates when initiating a course reset by selecting the **Use new assignment dates** check box. The assignment start date will be set to the date and time of the course reset, while the due and post date will elapse seven days from then.
+
+If you’d rather not use new assignment dates, that’s fine; Turnitin will use the course’s original assignment dates instead. However, any anonymous marking settings will not be carried over for assignments where the post date has passed.
+
+![Reset course feature](https://github.com/turnitin/moodle-mod_turnitintooltwo/blob/master/pix/changelog/resetcourse.png "Reset course feature")
+
+---
+
+### Date:		2017-July-19
+### Release:	v2017071901
+
+This release is for beta testers of the V1 to V2 Migration Tool. Please note that you will also need to update to Moodle Direct V1 (v2017071901) in order for the Migration Tool to work.
+
+---
+
+### Date:		2017-July-03
+### Release:	v2017070301
+
+We now support Moodle 3.3!
+
+- Changed assignment names to be plugin specific
+- Added tool tips to interface icons  (Thanks to @rlorenzo)
+- All settings are preserved when duplicating or restoring an assignment
+- Students no longer see PHP warnings
+- Fixed a code issue for assignment backup and restore (Thanks to @davidscotson)
+
+**Changed assignment names to be plugin specific** - When creating a course that included both V1 and V2 assignments, it was difficult to differentiate between the two plugins during setup, with them both being titled 'Turnitin Assignment'. To resolve this, we've changed the assignment titles to be plugin specific.
+
+**Added tool tips to interface icons**  - We received a request to add a tooltip to the following Turnitin interface icons: trash can, pencil, grade, and download. We also swapped the cloud icon (used for downloading a submission) to an easier-to-identify arrow icon.
+
+**Note:** A tool tip is a message that appears when the cursor is positioned over an icon, image, or any other graphic. The inclusion of icon tooltips increases accessibility for users (particularly those using screen readers!)
+
+**All settings are preserved when duplicating or restoring an assignment** - We've fixed an issue that resulted in the 'Allow submission of any file type' and 'Check against Institutional Repository' settings to be forgotten about when duplicating or restoring from backup. Now, a restored or duplicated assignment will have identical settings to its source assignment. Phew!
+
+**Students no longer see PHP warnings** - We received reports that students were able to see PHP errors if Moodle debugging was set to full developer level by the administrator. We've fixed this to ensure that the PHP error is no longer visible to students.
+
+**Fixed a code issue for assignment backup and restore** - We noticed that in the assignment backup and restore code, the same URL substitution was used for V2 as in V1, which could potentially cause backup and restoration issues. We've corrected this so that 'TURNITINTOOLTWO' is now used to encode links to the module and module list, rather than its V1 counterpart, 'TURNITINTOOL'. 
+
+---
+
+### Date:		2017-May-24
+### Release:	v2017052401
+
+- Modified the name sorting on the assignment inbox to allow sorting by surname and firstname.
+- Escape any HTML or Javascript from submission extract before displaying successful submission message.
+- Strip files and images from description in calendar view.
+- Remove filepaths from error messages unless debugging is set to developer level.
+- Fix bug where checkbox settings weren't being saved.
+- Fix course reset failing due to bug introduced by extending assignment titles.
+- Fix the unpopulated drop down menus in support wizard.
+- Add further unit test infrastructure.
+- No longer send digital receipt message for empty grading template submissions.
+- Assign Mexican Spanish to Spanish in Turnitin rather than defaulting to English. (Thanks to @jobcespedes)
+
+**List order now consistent between Moodle and Turnitin assignments** - The Moodle submission inbox displays student names in the first name/last name format (e.g. John Smith) and allows instructors to order the list by last name. However, Turnitin list entries could only be ordered by first name. Turnitin is now aligned with Moodle's list ordering.
+
+**Digital receipts no longer execute script found in a paper** - If a student inserted HTML, JavaScript, or any other script tags in their paper, this was executed when the digital receipt displayed after submission. Fixed it! The digital receipt will no longer execute the script (if any script is included) for future submissions.
+
+**Rectified broken files and images in Moodle calendar** - As Moodle calendar doesn't support files or images, any files or images added to the assignment description would appear as broken in the calendar. We'll now strip all files and images from the description before its transfer into the calendar.
+
+**Removed unnecessary information from error messages** - We received feedback from users that one or two error messages included irrelevant information. Our engineers have worked their magic to ensure that any messages you see are now meaningful and help you to resolve the error you're encountering.
+
+**Course reset is now working as expected** - We had some problems with the Moodle course reset feature after the release of 2017031301, with student papers remaining in place even after opting to reset the course. With debugging enabled, an error message displayed, confirming the issue. We've thankfully managed to resolve the problem and you can now give the course reset feature another try.
+
+**Support wizard issues resolved** - We noticed that some administrators and instructors were having trouble using the Turnitin support wizard within Moodle. One of the wizard drop-down menus failed to populate, causing difficulty in raising a support ticket with us. Bug targeted and eliminated!
+
+**No more digital receipts sent for grading template submissions** - When an instructor uses a grading template to grade a student's work, this acts as a submission and delivered a digital receipt to students. Students found the receipt confusing as they hadn't personally made a submission to Turnitin, but the receipt was advising otherwise. We've stopped digital receipts from being sent to students for grading template submissions.
+
+---
+
 ### Date:		2017-March-13
 ### Release:	v2017031301
 
 - Minor update Gradebook method refactor so it can be called from other contexts.
-- Allow class and assignment titles to be up to 256 characters in length.
-- Add warning if PHP SOAP extension not installed.
-- Force refresh button added to assignment settings page to sync all submission.
-- Fixes:
-	- Send revealing user rather than submitted user when revealing anonymous submissions.
-	- Stop enrolling unenrolled Moodle students when downloading submissions from Turnitin.
-	- Enforce anonymity on newly created assignment parts.
-	- Only save one submission record per student per assignment part when refreshing submissions from Turnitin.
+- Extended the character limit for class and assignment titles.
+- Added a warning if PHP SOAP extension is not installed.
+- Implemented a 'force refresh button' to assignment settings page.
+- Resolved an issue affecting revealer's name in anonymous submissions.
+- Stopped re-enrolling previously un-enrolled Moodle students.
+- Fixed a bug with anonymity on newly created assignment parts.
+- Resolved bug affecting assignment inbox access.
+- Fixed an issue causing all submissions to refresh upon individual student login.
+
+
+**Extended the character limit for class and assignment titles** - Some users found the character limit for class and assignment titles restrictive; we've extended the title limits to 256 characters, allowing more freedom when setting up classes and assignments.
+
+**Added a warning if PHP SOAP extension is not installed** - We found that installation would fail without PHP SOAP (PHP5-SOAP, PHP7-SOAP) being installed, and although it's a required package, this wasn't listed as being so. We've added a warning in settings if the extension is not installed, saving you from a failed installation. 
+
+**Implemented a 'force refresh button' to assignment settings page** - Some users informed us that grades were failing to appear in the grade book after their insertion in the document viewer, as well as submission updates not transferring to the assignment inbox. To fix this, we've added a button allowing you to force refresh this data, syncing all submission changes to the grade book and inbox.
+
+**Resolved an issue affecting revealer's name in anonymous submissions** - Reports revealed that the student's name appeared as the revealer of an anonymous submission, rather than the name of the instructor. This resulted in Turnitin administrators having no record of the instructor who requested the reveal. This has now been rectified.
+
+**Stopped re-enrolling previously unenrolled Moodle students** - It appeared that unenrolled students would be re-enrolled when instructors downloaded submissions from Turnitin. We've fixed this! Now, when a student who has submitted is removed from a Moodle course, they will not be re-enrolled when the submission is refreshed.
+
+**Fixed a bug with anonymity on newly created assignment parts** - We received reports that when a second (or more parts) were added to a single-part anonymous assignment, the anonymity setting was not passed across. Our engineers have fixed this problem and our testers have ensured that new parts of an anonymous assignment are anonymous. Thanks for your patience with this one!
+
+**Resolved bug affecting assignment inbox access** - If a student had two submissions for one assignment part in Turnitin, the Moodle assignment inbox would continue to load and hang with the error message: Loading data from Turnitin. We resolved this by ensuring that the system only saves one submission record per student per assignment when refreshing submissions from Turnitin.
+
+**Fixed an issue causing all submissions to refresh upon individual student login** - If a student logged into the assignment inbox, all submissions were refreshed, causing students to show as having updated the grade for other graded submission(s) and subsequently appear as graders in grade reports. We've resolved this by ensuring that a student only has an effect on their own submission.
 
 ---
 

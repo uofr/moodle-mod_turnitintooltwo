@@ -21,6 +21,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once(__DIR__."/lib.php");
 require_once(__DIR__.'/turnitintooltwo_comms.class.php');
 require_once(__DIR__.'/turnitintooltwo_user.class.php');
 require_once(__DIR__.'/turnitintooltwo_submission.class.php');
@@ -37,7 +38,7 @@ class turnitintooltwo_assignment {
         $this->id = $id;
         $this->type = $type;
 
-        if ($type == 'TT') {
+        if (($type == 'TT') || ($type == 'V1')) {
             if (!empty($turnitintooltwo)) {
                 $this->turnitintooltwo = $turnitintooltwo;
             } else {
@@ -90,7 +91,8 @@ class turnitintooltwo_assignment {
      */
     public function add_tii_tutor($tutorid) {
         // Get Course data.
-        $course = $this->get_course_data($this->turnitintooltwo->course);
+        $coursetype = turnitintooltwo_get_course_type($this->turnitintooltwo->legacy);
+        $course = $this->get_course_data($this->turnitintooltwo->course, $coursetype);
         $user = new turnitintooltwo_user($tutorid, 'Instructor');
         $notice = array();
 
@@ -497,7 +499,8 @@ class turnitintooltwo_assignment {
 
         $users = array();
         // Get Moodle Course Object.
-        $course = $this->get_course_data($this->turnitintooltwo->course);
+        $coursetype = turnitintooltwo_get_course_type($this->turnitintooltwo->legacy);
+        $course = $this->get_course_data($this->turnitintooltwo->course, $coursetype);
         $classmembers = $this->get_class_memberships($course->turnitin_cid);
 
         $turnitincomms = new turnitintooltwo_comms();
@@ -581,7 +584,8 @@ class turnitintooltwo_assignment {
      */
     public function enrol_all_students($cm) {
         // Get Moodle Course Object.
-        $course = $this->get_course_data($this->turnitintooltwo->course);
+        $coursetype = turnitintooltwo_get_course_type($this->turnitintooltwo->legacy);
+        $course = $this->get_course_data($this->turnitintooltwo->course, $coursetype);
 
         // Get local course members.
         $students = get_enrolled_users(context_module::instance($cm->id),
@@ -817,7 +821,9 @@ class turnitintooltwo_assignment {
 
         $properties = new stdClass();
         $properties->name = $this->turnitintooltwo->name . ' - ' . $partname;
-        $properties->description = ($this->turnitintooltwo->intro == null) ? '' : $this->turnitintooltwo->intro;
+        $intro = strip_pluginfile_content($this->turnitintooltwo->intro);
+        $intro = preg_replace("/<img[^>]+\>/i", "", $intro);
+        $properties->description = ($intro == null) ? '' : $intro;
         $properties->courseid = $this->turnitintooltwo->course;
         $properties->groupid = 0;
         $properties->userid = 0;
@@ -1289,7 +1295,8 @@ class turnitintooltwo_assignment {
         $this->turnitintooltwo->timemodified = time();
 
         // Get Moodle Course Object.
-        $course = $this->get_course_data($this->turnitintooltwo->course);
+        $coursetype = turnitintooltwo_get_course_type($this->turnitintooltwo->legacy);
+        $course = $this->get_course_data($this->turnitintooltwo->course, $coursetype);
 
         // Get the Turnitin owner of this this Course or make user the owner if none.
         $ownerid = $this->get_tii_owner($course->id);
@@ -1329,40 +1336,10 @@ class turnitintooltwo_assignment {
         // Update GradeMark setting depending on config setting.
         $this->turnitintooltwo->usegrademark = $config->usegrademark;
 
-        // Set the checkbox settings for updates.
-        $this->turnitintooltwo->erater_spelling = 0;
-        if (isset($this->turnitintooltwo->erater_spelling)) {
-            $this->turnitintooltwo->erater_spelling = $this->turnitintooltwo->erater_spelling;
-        }
-
-        $this->turnitintooltwo->erater_grammar = 0;
-        if (isset($this->turnitintooltwo->erater_grammar)) {
-            $this->turnitintooltwo->erater_grammar = $this->turnitintooltwo->erater_grammar;
-        }
-
-        $this->turnitintooltwo->erater_usage = 0;
-        if (isset($this->turnitintooltwo->erater_usage)) {
-            $this->turnitintooltwo->erater_usage = $this->turnitintooltwo->erater_usage;
-        }
-
-        $this->turnitintooltwo->erater_mechanics = 0;
-        if (isset($this->turnitintooltwo->erater_mechanics)) {
-            $this->turnitintooltwo->erater_mechanics = $this->turnitintooltwo->erater_mechanics;
-        }
-
-        $this->turnitintooltwo->erater_style = 0;
-        if (isset($this->turnitintooltwo->erater_style)) {
-            $this->turnitintooltwo->erater_style = $this->turnitintooltwo->erater_style;
-        }
-
-        $this->turnitintooltwo->transmatch = 0;
-        if (isset($this->turnitintooltwo->transmatch)) {
-            $this->turnitintooltwo->transmatch = $this->turnitintooltwo->transmatch;
-        }
-
-        $this->turnitintooltwo->institution_check = 0;
-        if (isset($this->turnitintooltwo->institution_check)) {
-            $this->turnitintooltwo->institution_check = $this->turnitintooltwo->institution_check;
+        // Set the checkbox fields.
+        $chkboxfields = array('erater_spelling', 'erater_grammar', 'erater_usage', 'erater_mechanics', 'erater_style', 'transmatch', 'institution_check');
+        foreach ($chkboxfields as $field) {
+            $this->set_checkbox_field($field, 0);
         }
 
         // Update each individual part.
@@ -1473,18 +1450,6 @@ class turnitintooltwo_assignment {
                 $part->unanon = 1;
             }
 
-            $properties = new stdClass();
-            $properties->name = $this->turnitintooltwo->name.' - '.$part->partname;
-            $properties->description = $this->turnitintooltwo->intro;
-            $properties->courseid = $this->turnitintooltwo->course;
-            $properties->groupid = 0;
-            $properties->userid = 0;
-            $properties->modulename = 'turnitintooltwo';
-            $properties->instance = $this->id;
-            $properties->eventtype = 'due';
-            $properties->timestart = $part->dtdue;
-            $properties->timeduration = 0;
-
             if ($i <= count($partids) && !empty($partdetails->id)) {
                 $part->id = $partids[$i - 1];
                 // Get Current Moodle part data.
@@ -1519,9 +1484,7 @@ class turnitintooltwo_assignment {
             }
 
             if ($createevent == true) {
-                require_once($CFG->dirroot.'/calendar/lib.php');
-                $event = new calendar_event($properties);
-                $event->update($properties, false);
+                $this->create_event($this->id, $part->partname, $part->dtdue);
             }
         }
 
@@ -1534,6 +1497,15 @@ class turnitintooltwo_assignment {
             turnitintooltwo_grade_item_update($this->turnitintooltwo);
         }
         return $update;
+    }
+
+    /**
+     * Initialise a checkbox value that may not have been set in the edit module form.
+     */
+    public function set_checkbox_field($field, $value = 0) {
+        if (!isset($this->turnitintooltwo->$field)) {
+            $this->turnitintooltwo->$field = $value;
+        }
     }
 
     /**
@@ -2019,6 +1991,7 @@ class turnitintooltwo_assignment {
                 $submission->userid = $submission->submission_nmuserid;
                 $submission->firstname = $submission->submission_nmfirstname;
                 $submission->lastname = $submission->submission_nmlastname;
+                $submission->fullname = $submission->firstname.' '.$submission->lastname;
 
                 $submissions[$submission->submission_part][$submission->userid] = $submission;
             }
