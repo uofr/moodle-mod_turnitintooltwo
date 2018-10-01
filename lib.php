@@ -1518,7 +1518,7 @@ function turnitintooltwo_print_overview($courses, &$htmlarray) {
                 if (!isset($submissioncount[$submission->submission_part])) {
                     $submissioncount[$submission->submission_part] = array('graded' => 0, 'submitted' => 0);
                 }
-                if ($submission->submission_grade != 'NULL' and $submission->submission_gmimaged == 1) {
+                if (!is_null($submission->submission_grade) and $submission->submission_gmimaged == 1) {
                     $submissioncount[$submission->submission_part]['graded']++;
                 }
                 $submissioncount[$submission->submission_part]['submitted']++;
@@ -1547,13 +1547,20 @@ function turnitintooltwo_print_overview($courses, &$htmlarray) {
             } else {
                 // If user is a student.
                 $submission = $turnitintooltwoassignment->get_submissions($cm, $part->id, $USER->id, 1);
-
+								
                 if (!empty($submission[$part->id][$USER->id])) {
+									// user has a submission, why are we displaying anything?
+									/*
                     $input = new stdClass();
                     $input->modified = userdate($submission[$part->id][$USER->id]->submission_modified,
                                             get_string('strftimedatetimeshort', 'langconfig'));
                     $input->objectid = $submission[$part->id][$USER->id]->submission_objectid;
                     $partsarray[$part->id]['status'] = get_string('studentstatus', 'turnitintooltwo', $input);
+										*/
+									
+									// unset this part if the user has a submission	
+									unset($partsarray[$part->id]);
+										
                 } else {
                     $partsarray[$part->id]['status'] = get_string('nosubmissions', 'turnitintooltwo');
                 }
@@ -1575,12 +1582,19 @@ function turnitintooltwo_print_overview($courses, &$htmlarray) {
         $str = html_writer::tag('div',
                         html_writer::tag('div', get_string('modulename', 'turnitintooltwo').": ".$assignmentlink.$partsblock,
                             array('class' => 'name')), array('class' => 'turnitintooltwo overview'));
-
-        if (empty($htmlarray[$turnitintooltwo->course]['turnitintooltwo'])) {
-            $htmlarray[$turnitintooltwo->course]['turnitintooltwo'] = $str;
-        } else {
-            $htmlarray[$turnitintooltwo->course]['turnitintooltwo'] .= $str;
-        }
+				
+				
+				if (empty($partsarray)) {
+					//nothing to display; unset the heading for this activity
+					unset($htmlarray[$turnitintooltwo->course]['turnitintooltwo']);
+				} else {
+					if (empty($htmlarray[$turnitintooltwo->course]['turnitintooltwo'])) {
+	            $htmlarray[$turnitintooltwo->course]['turnitintooltwo'] = $str;
+	        } else {
+	            $htmlarray[$turnitintooltwo->course]['turnitintooltwo'] .= $str;
+	        }
+				}
+        
     }
 }
 
