@@ -1558,7 +1558,8 @@ function turnitintooltwo_print_overview($courses, &$htmlarray) {
                     $partsarray[$part->id]['status'] = get_string('studentstatus', 'turnitintooltwo', $input);
 										*/
 									
-									// unset this part if the user has a submission	
+									// unset this part if the user has a submission
+									// the user is a student, so there is nothing that needs attention	
 									unset($partsarray[$part->id]);
 										
                 } else {
@@ -1583,11 +1584,9 @@ function turnitintooltwo_print_overview($courses, &$htmlarray) {
                         html_writer::tag('div', get_string('modulename', 'turnitintooltwo').": ".$assignmentlink.$partsblock,
                             array('class' => 'name')), array('class' => 'turnitintooltwo overview'));
 				
-				
-				if (empty($partsarray)) {
-					//nothing to display; unset the heading for this activity
-					unset($htmlarray[$turnitintooltwo->course]['turnitintooltwo']);
-				} else {
+				// only write to the overview if we have an active part for this user
+				// students who have made a submission do not need an alert
+				if (!empty($partsarray)) {
 					if (empty($htmlarray[$turnitintooltwo->course]['turnitintooltwo'])) {
 	            $htmlarray[$turnitintooltwo->course]['turnitintooltwo'] = $str;
 	        } else {
