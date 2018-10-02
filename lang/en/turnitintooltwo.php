@@ -18,6 +18,7 @@
 // Date: 2015-04-01
 // Language: en.
 
+$string['activityoverview'] = 'You have Assignments (Turntin) that need attention';
 $string['addsubmission'] = 'Add Submission';
 $string['allowlate'] = 'Allow Submissions after the Due Date';
 $string['allsubmissions'] = 'Submission Inbox';
