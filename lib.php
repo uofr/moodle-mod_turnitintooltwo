@@ -1754,8 +1754,7 @@ function mod_turnitintooltwo_core_calendar_provide_event_action(calendar_event $
         $hassubmission = $DB->get_records('turnitintooltwo_submissions', $queryparams);
     }
 
-    if ((!empty($cm->customdata['timeclose']) && $cm->customdata['timeclose'] < time()) ||
-        $assignmentpart->max < time() || !empty($hassubmission))  {
+    if ((!empty($cm->customdata['timeclose']) && $cm->customdata['timeclose'] < time()) || !empty($hassubmission))  {
         // The assignment has closed so the user can no longer submit anything.
         return null;
     }
