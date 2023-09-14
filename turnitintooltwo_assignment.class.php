@@ -400,6 +400,8 @@ class turnitintooltwo_assignment {
     public function edit_tii_course($course, $coursetype = "TT") {
         global $DB;
 
+        $now = time();
+
         $turnitincomms = new turnitintooltwo_comms();
         $turnitincall = $turnitincomms->initialise_api();
 
@@ -410,7 +412,12 @@ class turnitintooltwo_assignment {
         // If a course end date is specified in Moodle then we set this in Turnitin with an additional month to
         // account for the Turnitin viewer becoming read-only once the class end date passes.
         if (!empty($course->enddate)) {
-            $enddate = strtotime('+1 month', $course->enddate);
+            if ($course->enddate < $now) {
+                $enddate = strtotime('+12 month', $now);
+            }
+            else {
+                $enddate = strtotime('+1 month', $course->enddate);
+            }
             $class->setEndDate(gmdate("Y-m-d\TH:i:s\Z", $enddate));
         }
 
