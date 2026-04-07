@@ -988,7 +988,6 @@ class turnitintooltwo_view {
         // $ur_do_resubmit = $turnitintooltwoassignment->turnitintooltwo->reportgenspeed;
 				$due_date = $partdetails[$partid]->dtdue; // to format and echo: userdate($partdetails[$partid]->dtdue,$dateformat);
 				$due_date_str = userdate($partdetails[$partid]->dtdue,$dateformat);
-				echo $due_date_str;
 				$current_date = time();
         
         $ur_sub_msg  = '<div class="ur_sub_msg"><p><em>Please note:</em> Originality reports typically take 20 minutes or less for the report to generate for the first submission. During busy periods this process can take up to 24 hours.</p>';
