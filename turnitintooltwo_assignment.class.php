@@ -763,7 +763,7 @@ class turnitintooltwo_assignment {
             $assignment->setDueDate(gmdate("Y-m-d\TH:i:s\Z", $this->turnitintooltwo->$attribute));
             $attribute = "dtpost".$i;
             $assignment->setFeedbackReleaseDate(gmdate("Y-m-d\TH:i:s\Z", $this->turnitintooltwo->$attribute));
-            $assignment->setInstructions(strip_tags($this->turnitintooltwo->intro));
+            // $assignment->setInstructions(strip_tags($this->turnitintooltwo->intro));
             $assignment->setAuthorOriginalityAccess($this->turnitintooltwo->studentreports);
             $assignment->setRubricId((!empty($this->turnitintooltwo->rubric)) ? $this->turnitintooltwo->rubric : '');
             $assignment->setSubmitPapersTo($this->turnitintooltwo->submitpapersto);
@@ -1356,7 +1356,7 @@ class turnitintooltwo_assignment {
             $assignment->setClassId($course->turnitin_cid);
             $assignment->setAuthorOriginalityAccess($this->turnitintooltwo->studentreports);
 
-            $assignment->setInstructions(strip_tags($this->turnitintooltwo->intro));
+            // $assignment->setInstructions(strip_tags($this->turnitintooltwo->intro));
 
             $assignment->setRubricId((!empty($this->turnitintooltwo->rubric)) ? $this->turnitintooltwo->rubric : '');
             $assignment->setSubmitPapersTo($this->turnitintooltwo->submitpapersto);
