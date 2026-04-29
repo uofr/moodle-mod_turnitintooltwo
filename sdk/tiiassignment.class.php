@@ -208,6 +208,9 @@ class TiiAssignment {
      * @param string $instructions
      */
     public function setInstructions( $instructions ) {
+        if (strlen($instructions) > 1000) {
+            $instructions = substr($instructions, 0, 1000);
+        }
         $this->instructions = $instructions;
     }
 

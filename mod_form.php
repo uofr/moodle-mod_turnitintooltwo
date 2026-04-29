@@ -565,13 +565,13 @@ class mod_turnitintooltwo_mod_form extends moodleform_mod {
 
         $partnames = array();
 
-        $formatparams = new stdClass();
-        $formatparams->field = get_string('turnitintooltwointro', 'turnitintooltwo');
-        $formatparams->length = TII_INTRO_CHARACTER_LIMIT;
-        $formatparams->inputlength = mb_strlen(strip_tags($data['introeditor']['text']));
-        if ($formatparams->inputlength > TII_INTRO_CHARACTER_LIMIT) {
-          $errors['introeditor'] = get_string('maxlengthwithinput', 'turnitintooltwo', $formatparams);
-        }
+        // $formatparams = new stdClass();
+        // $formatparams->field = get_string('turnitintooltwointro', 'turnitintooltwo');
+        // $formatparams->length = TII_INTRO_CHARACTER_LIMIT;
+        // $formatparams->inputlength = mb_strlen(strip_tags($data['introeditor']['text']));
+        // if ($formatparams->inputlength > TII_INTRO_CHARACTER_LIMIT) {
+        //   $errors['introeditor'] = get_string('maxlengthwithinput', 'turnitintooltwo', $formatparams);
+        // }
 
         foreach ($data as $name => $value) {
             // Get part names from array of data.
